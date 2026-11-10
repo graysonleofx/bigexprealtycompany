@@ -21,7 +21,7 @@ const Footer = () => {
                 <Building2 className="h-5 w-5" />
               </span>
               <span className="text-xl font-bold tracking-tight">
-                Prestige<span className="text-gold"> Estates</span>
+                BIG EXP<span className="text-gold"> Estates</span>
               </span>
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed">
