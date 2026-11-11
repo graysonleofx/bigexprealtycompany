@@ -34,6 +34,13 @@ const propertySchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
   location: z.string().min(1, "Location is required").max(200),
   price: z.coerce.number().min(0, "Price must be positive"),
+  transaction_type: z.enum(["sale", "rent", "both"]),
+  rent_price: z.number().min(0).nullable(),
+  rent_period: z.enum(["weekly", "monthly", "yearly"]),
+  security_deposit: z.number().min(0).nullable(),
+  availability_date: z.string().nullable(),
+  minimum_rental_period: z.number().int().min(1).nullable(),
+  availability_status: z.enum(["available", "pending", "sold", "rented", "unavailable"]),
   beds: z.coerce.number().min(0).max(50),
   baths: z.coerce.number().min(0).max(50),
   sqft: z.coerce.number().min(0),
@@ -41,9 +48,16 @@ const propertySchema = z.object({
   featured: z.boolean(),
   description: z.string().max(5000).nullable(),
   image_url: z.string().nullable(),
-  year_built: z.coerce.number().min(1800).max(2100).nullable().optional(),
+  year_built: z.preprocess(
+    (value) => value === "" || value === null || value === undefined ? null : Number(value),
+    z.number().min(1800).max(2100).nullable(),
+  ),
   lot_size: z.string().max(50).nullable().optional(),
   parking: z.string().max(100).nullable().optional(),
+}).superRefine((values, context) => {
+  if (values.transaction_type !== "sale" && values.rent_price <= 0) {
+    context.addIssue({ code: z.ZodIssueCode.custom, path: ["rent_price"], message: "Enter a rent greater than zero" });
+  }
 });
 
 type PropertyFormValues = z.infer<typeof propertySchema>;
@@ -71,6 +85,13 @@ const PropertyFormDialog = ({
       title: "",
       location: "",
       price: 0,
+      transaction_type: "sale",
+      rent_price: null,
+      rent_period: "monthly",
+      security_deposit: null,
+      availability_date: "",
+      minimum_rental_period: null,
+      availability_status: "available",
       beds: 0,
       baths: 0,
       sqft: 0,
@@ -90,6 +111,13 @@ const PropertyFormDialog = ({
         title: property.title,
         location: property.location,
         price: property.price,
+        transaction_type: property.transaction_type,
+        rent_price: property.rent_price,
+        rent_period: property.rent_period || "monthly",
+        security_deposit: property.security_deposit,
+        availability_date: property.availability_date || "",
+        minimum_rental_period: property.minimum_rental_period,
+        availability_status: property.availability_status,
         beds: property.beds,
         baths: property.baths,
         sqft: property.sqft,
@@ -106,6 +134,13 @@ const PropertyFormDialog = ({
         title: "",
         location: "",
         price: 0,
+        transaction_type: "sale",
+        rent_price: null,
+        rent_period: "monthly",
+        security_deposit: null,
+        availability_date: "",
+        minimum_rental_period: null,
+        availability_status: "available",
         beds: 0,
         baths: 0,
         sqft: 0,
@@ -125,6 +160,13 @@ const PropertyFormDialog = ({
       title: values.title,
       location: values.location,
       price: values.price,
+      transaction_type: values.transaction_type,
+      rent_price: values.transaction_type === "sale" ? null : values.rent_price,
+      rent_period: values.transaction_type === "sale" ? null : values.rent_period,
+      security_deposit: values.transaction_type === "sale" ? null : values.security_deposit,
+      availability_date: values.transaction_type === "sale" || !values.availability_date ? null : values.availability_date,
+      minimum_rental_period: values.transaction_type === "sale" ? null : values.minimum_rental_period,
+      availability_status: values.availability_status,
       beds: values.beds,
       baths: values.baths,
       sqft: values.sqft,
@@ -205,15 +247,38 @@ const PropertyFormDialog = ({
                 )}
               />
 
+              {form.watch("transaction_type") !== "rent" && (
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Sale Price ($)</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="4250000" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
-                name="price"
+                name="transaction_type"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Price ($)</FormLabel>
-                    <FormControl>
-                      <Input type="number" placeholder="4250000" {...field} />
-                    </FormControl>
+                    <FormLabel>Transaction Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="sale">For sale</SelectItem>
+                        <SelectItem value="rent">For rent</SelectItem>
+                        <SelectItem value="both">Sale and rent</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -237,6 +302,102 @@ const PropertyFormDialog = ({
                             {type}
                           </SelectItem>
                         ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("transaction_type") !== "sale" && (
+                <>
+                  <FormField
+                    control={form.control}
+                    name="rent_price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Rent Price</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="0" step="0.01" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value === "" ? null : Number(event.target.value))} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="rent_period"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Rent Period</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                          <SelectContent>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                            <SelectItem value="yearly">Yearly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="security_deposit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Security Deposit (optional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="0" step="0.01" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value === "" ? null : Number(event.target.value))} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="availability_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Available From (optional)</FormLabel>
+                        <FormControl>
+                          <Input type="date" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value)} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="minimum_rental_period"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Minimum Rental Period (months, optional)</FormLabel>
+                        <FormControl>
+                          <Input type="number" min="1" value={field.value ?? ""} onChange={(event) => field.onChange(event.target.value === "" ? null : Number(event.target.value))} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </>
+              )}
+
+              <FormField
+                control={form.control}
+                name="availability_status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Availability</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        <SelectItem value="available">Available</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="sold">Sold</SelectItem>
+                        <SelectItem value="rented">Rented</SelectItem>
+                        <SelectItem value="unavailable">Unavailable</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

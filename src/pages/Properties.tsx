@@ -31,11 +31,13 @@ const Properties = () => {
   const initialType = searchParams.get("type") || "all";
   const initialPrice = searchParams.get("price") || "";
   const initialBeds = searchParams.get("beds") || "any";
+  const initialTransaction = searchParams.get("transaction") || "all";
   
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState(initialType);
   const [selectedBeds, setSelectedBeds] = useState(initialBeds);
+  const [selectedTransaction, setSelectedTransaction] = useState(initialTransaction);
   const [locationFilter, setLocationFilter] = useState(initialLocation);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000000]);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -64,12 +66,15 @@ const Properties = () => {
   // Get min/max prices from properties
   const { minPrice, maxPrice } = useMemo(() => {
     if (properties.length === 0) return { minPrice: 0, maxPrice: 50000000 };
-    const prices = properties.map((p) => p.price);
+    const prices = properties
+      .map((p) => selectedTransaction === "rent" ? p.rent_price : p.price)
+      .filter((price): price is number => price !== null);
+    if (prices.length === 0) return { minPrice: 0, maxPrice: 50000000 };
     return {
       minPrice: Math.min(...prices),
       maxPrice: Math.max(...prices),
     };
-  }, [properties]);
+  }, [properties, selectedTransaction]);
 
   const filteredProperties = useMemo(() => {
     return properties.filter((property) => {
@@ -80,6 +85,11 @@ const Properties = () => {
       const matchesType =
         selectedType === "all" ||
         property.type.toLowerCase() === selectedType.toLowerCase();
+
+      const matchesTransaction =
+        selectedTransaction === "all" ||
+        (selectedTransaction === "sale" && (property.transaction_type === "sale" || property.transaction_type === "both")) ||
+        (selectedTransaction === "rent" && (property.transaction_type === "rent" || property.transaction_type === "both") && property.rent_price !== null);
       
       const matchesBeds =
         selectedBeds === "any" ||
@@ -89,15 +99,17 @@ const Properties = () => {
         !locationFilter ||
         property.location.toLowerCase().includes(locationFilter.toLowerCase());
       
+      const displayedPrice = selectedTransaction === "rent" ? property.rent_price : property.price;
       const matchesPrice =
-        property.price >= priceRange[0] && property.price <= priceRange[1];
+        displayedPrice !== null && displayedPrice >= priceRange[0] && displayedPrice <= priceRange[1];
 
-      return matchesSearch && matchesType && matchesBeds && matchesLocation && matchesPrice;
+      return matchesSearch && matchesType && matchesTransaction && matchesBeds && matchesLocation && matchesPrice;
     });
-  }, [properties, searchQuery, selectedType, selectedBeds, locationFilter, priceRange]);
+  }, [properties, searchQuery, selectedType, selectedTransaction, selectedBeds, locationFilter, priceRange]);
 
   const hasActiveFilters = 
     selectedType !== "all" || 
+    selectedTransaction !== "all" ||
     selectedBeds !== "any" || 
     locationFilter !== "" || 
     priceRange[0] > 0 || 
@@ -105,6 +117,7 @@ const Properties = () => {
 
   const clearFilters = () => {
     setSelectedType("all");
+    setSelectedTransaction("all");
     setSelectedBeds("any");
     setLocationFilter("");
     setPriceRange([0, maxPrice]);
@@ -171,6 +184,17 @@ const Properties = () => {
                   <SelectItem value="estate">Estate</SelectItem>
                   <SelectItem value="condo">Condo</SelectItem>
                   <SelectItem value="apartment">Apartment</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={selectedTransaction} onValueChange={setSelectedTransaction}>
+                <SelectTrigger className="h-12 w-[140px]">
+                  <SelectValue placeholder="Buy or rent" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Buy or rent</SelectItem>
+                  <SelectItem value="sale">For sale</SelectItem>
+                  <SelectItem value="rent">For rent</SelectItem>
                 </SelectContent>
               </Select>
 
@@ -326,12 +350,16 @@ const Properties = () => {
                     image={property.image_url || "/placeholder.svg"}
                     title={property.title}
                     location={property.location}
-                    price={`$${property.price.toLocaleString()}`}
+                    price={`$${(selectedTransaction === "rent" ? property.rent_price || 0 : property.price).toLocaleString()}`}
                     beds={property.beds}
                     baths={property.baths}
                     sqft={`${property.sqft.toLocaleString()} sqft`}
                     type={property.type}
                     featured={property.featured}
+                    transactionType={property.transaction_type}
+                    rentPrice={property.rent_price}
+                    rentPeriod={property.rent_period}
+                    availabilityStatus={property.availability_status}
                   />
                 </div>
               ))}

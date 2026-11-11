@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,12 +22,15 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const { user, signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
+  const destination = returnTo?.startsWith("/") && !returnTo.startsWith("//") ? returnTo : "/";
 
   useEffect(() => {
     if (user) {
-      navigate("/");
+      navigate(destination);
     }
-  }, [user, navigate]);
+  }, [user, navigate, destination]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +53,7 @@ const Auth = () => {
           }
         } else {
           toast.success("Welcome back!");
-          navigate("/");
+          navigate(destination);
         }
       } else {
         const { error } = await signUp(validated.email, validated.password, validated.fullName || "");
@@ -62,7 +65,7 @@ const Auth = () => {
           }
         } else {
           toast.success("Account created successfully!");
-          navigate("/");
+          navigate(destination);
         }
       }
     } catch (error) {
@@ -83,8 +86,8 @@ const Auth = () => {
           <div className="mb-5 inline-flex h-12 w-12 items-center justify-center border border-gold/35 bg-gold/10 text-gold">
             <Building2 className="h-6 w-6" />
           </div>
-          <h1 className="text-3xl font-bold text-primary-foreground">
-            Prestige<span className="text-gold"> Estates</span>
+          <h1 className="text-2xl font-bold text-primary-foreground sm:text-3xl">
+            BIG EXP <span className="text-gold">REALTY COMPANY</span>
           </h1>
           <p className="mt-2 text-primary-foreground/60">
             {isLogin ? "Sign in to your account" : "Create a new account"}

@@ -83,6 +83,10 @@ const FeaturedProperties = () => {
                   sqft={`${property.sqft.toLocaleString()} sqft`}
                   type={property.type}
                   featured={property.featured}
+                  transactionType={property.transaction_type}
+                  rentPrice={property.rent_price}
+                  rentPeriod={property.rent_period}
+                  availabilityStatus={property.availability_status}
                 />
               </div>
             ))}

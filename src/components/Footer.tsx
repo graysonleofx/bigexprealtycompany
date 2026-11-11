@@ -126,7 +126,7 @@ const Footer = () => {
         <div className="mt-14 border-t border-primary-foreground/10 pt-7">
           <div className="flex flex-col items-center justify-between gap-4 text-center md:flex-row md:text-left">
             <p className="text-primary-foreground/50 text-sm">
-              © {new Date().getFullYear()} Prestige Estates. All rights reserved.
+              © {new Date().getFullYear()} BIG EXP REALTY COMPANY. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-6 md:justify-end">
               <Link to="/properties" className="inline-flex items-center gap-1 text-primary-foreground/50 text-sm transition-smooth hover:text-primary-foreground">

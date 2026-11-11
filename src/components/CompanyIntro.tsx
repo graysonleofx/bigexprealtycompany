@@ -20,7 +20,7 @@ const CompanyIntro = () => (
           <div className="absolute inset-0 bg-gradient-to-t from-slate-dark/45 via-transparent to-transparent" />
           <div className="absolute -bottom-4 -right-4 h-2/3 w-2/3 border-b border-r border-gold/60" />
           <div className="absolute bottom-6 left-6 border-l-2 border-gold bg-slate-dark/80 px-5 py-4 backdrop-blur-md">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/65">Prestige Estates</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary-foreground/65">BIG EXP REALTY COMPANY</p>
             <p className="mt-1 text-lg font-bold text-primary-foreground">A place to move forward.</p>
           </div>
         </div>

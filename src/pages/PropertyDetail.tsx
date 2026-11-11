@@ -10,7 +10,6 @@ import {
   Heart,
   Share2,
   Calendar,
-  Phone,
   ChevronLeft,
   Check,
 } from "lucide-react";
@@ -18,7 +17,6 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useProperties, useProperty } from "@/hooks/useProperties";
 import PropertyCard from "@/components/PropertyCard";
-import ScheduleTourDialog from "@/components/ScheduleTourDialog";
 import SupportTicketForm from "@/components/SupportTicketForm";
 
 import property1 from "@/assets/property-1.jpg";
@@ -47,7 +45,6 @@ const PropertyDetail = () => {
   const { id } = useParams();
   const [activeImage, setActiveImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showTourDialog, setShowTourDialog] = useState(false);
   const { data: property, isLoading } = useProperty(id || "");
   const { data: properties = [] } = useProperties();
 
@@ -95,6 +92,14 @@ const PropertyDetail = () => {
     : fallbackImages;
 
   const features = property.amenities?.length > 0 ? property.amenities : defaultFeatures;
+  const transactionType = property.transaction_type || "sale";
+  const availabilityStatus = property.availability_status || "available";
+  const isAvailable = availabilityStatus === "available";
+  const saleAllowed = transactionType === "sale" || transactionType === "both";
+  const rentAllowed = transactionType === "rent" || transactionType === "both";
+  const availabilityLabel = availabilityStatus === "pending"
+    ? "Application Pending"
+    : availabilityStatus.charAt(0).toUpperCase() + availabilityStatus.slice(1);
 
   return (
     <main className="min-h-screen bg-background">
@@ -158,6 +163,9 @@ const PropertyDetail = () => {
                       <span className="px-3 py-1 bg-gold/10 text-gold text-sm font-medium rounded-full">
                         {property.type}
                       </span>
+                      <span className="ml-2 inline-flex px-3 py-1 bg-secondary text-sm font-medium capitalize text-muted-foreground">
+                        {transactionType === "both" ? "For Sale & Rent" : `For ${transactionType}`}
+                      </span>
                       <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mt-3">
                         {property.title}
                       </h1>
@@ -184,9 +192,28 @@ const PropertyDetail = () => {
                     </div>
                   </div>
 
-                  <p className="mt-4 text-3xl font-bold text-gold md:text-4xl">
-                    ${property.price.toLocaleString()}
-                  </p>
+                  {transactionType !== "rent" && (
+                    <p className="mt-4 text-3xl font-bold text-gold md:text-4xl">
+                      ${property.price.toLocaleString()} <span className="text-sm font-medium text-muted-foreground">For Sale</span>
+                    </p>
+                  )}
+                  {rentAllowed && property.rent_price !== null && (
+                    <p className="mt-2 text-2xl font-bold text-gold">
+                      ${property.rent_price.toLocaleString()} <span className="text-sm font-medium text-muted-foreground">/ {property.rent_period} rent</span>
+                    </p>
+                  )}
+                  {rentAllowed && property.security_deposit !== null && (
+                    <p className="mt-2 text-sm text-muted-foreground">Security deposit: ${property.security_deposit.toLocaleString()}</p>
+                  )}
+                  {rentAllowed && property.availability_date && (
+                    <p className="mt-1 text-sm text-muted-foreground">Available from: {property.availability_date}</p>
+                  )}
+                  {rentAllowed && property.minimum_rental_period && (
+                    <p className="mt-1 text-sm text-muted-foreground">Minimum rental period: {property.minimum_rental_period} months</p>
+                  )}
+                  {!isAvailable && (
+                    <p className="mt-4 inline-flex bg-secondary px-3 py-2 text-sm font-semibold text-muted-foreground">{availabilityLabel}</p>
+                  )}
                 </div>
 
                 {/* Quick Stats */}
@@ -275,21 +302,16 @@ const PropertyDetail = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <Button 
-                      variant="gold" 
-                      size="lg" 
-                      className="w-full"
-                      onClick={() => setShowTourDialog(true)}
-                    >
-                      <Calendar className="mr-2 h-5 w-5" />
-                      Schedule Tour
-                    </Button>
-                    <a href={`tel:${defaultAgent.phone}`}>
-                      <Button variant="outline" size="lg" className="w-full">
-                        <Phone className="mr-2 h-5 w-5" />
-                        {defaultAgent.phone}
-                      </Button>
-                    </a>
+                    {isAvailable && saleAllowed && (
+                      <Link to={`/property/${property.id}/request?type=purchase`} className="block">
+                        <Button variant="gold" size="lg" className="w-full">Buy Property</Button>
+                      </Link>
+                    )}
+                    {isAvailable && rentAllowed && (
+                      <Link to={`/property/${property.id}/request?type=rental`} className="block">
+                        <Button variant={saleAllowed ? "outline" : "gold"} size="lg" className="w-full">Rent Property</Button>
+                      </Link>
+                    )}
                     <SupportTicketForm
                       propertyId={property.id}
                       propertyTitle={property.title}
@@ -340,18 +362,16 @@ const PropertyDetail = () => {
                     sqft={`${item.sqft.toLocaleString()} sqft`}
                     type={item.type}
                     featured={item.featured}
+                    transactionType={item.transaction_type}
+                    rentPrice={item.rent_price}
+                    rentPeriod={item.rent_period}
+                    availabilityStatus={item.availability_status}
                   />
                 ))}
             </div>
           </div>
         </section>
       )}
-
-      <ScheduleTourDialog
-        open={showTourDialog}
-        onOpenChange={setShowTourDialog}
-        propertyTitle={property.title}
-      />
 
       <Footer />
     </main>

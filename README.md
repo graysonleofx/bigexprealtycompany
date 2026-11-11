@@ -64,6 +64,14 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/6a792c51-0dcd-41b7-8ace-4687aefbef25) and click on Share -> Publish.
 
+## Property purchase requests and rental applications
+
+Apply the SQL migration in `supabase/migrations/20261111143000_add_property_transactions.sql` to the connected Supabase project before deploying the updated app. Existing listings are preserved and default to For Sale / Available. Admins can set a listing to For Sale, For Rent, or both, maintain rental terms, and manage its availability from the property editor.
+
+Signed-in users can submit purchase requests or rental applications, then review their status under **My Requests**. Request ownership, duplicate active applications, property availability, and administrator-only status changes are enforced by Supabase policies and the `create_property_request` database function.
+
+The existing `send-ticket-notification` Edge Function also sends request and status emails. It uses the existing `RESEND_API_KEY` and Supabase function secrets. Set `PROPERTY_REQUEST_NOTIFICATION_EMAIL` in the Edge Function environment to receive new-request alerts; this value is optional. If email delivery is unavailable, the request still saves and remains visible in the user and admin dashboards.
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!

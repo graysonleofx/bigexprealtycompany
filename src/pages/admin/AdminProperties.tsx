@@ -127,7 +127,8 @@ const AdminProperties = () => {
 
                     <div className="text-right flex-shrink-0">
                       <p className="text-lg font-heading font-bold text-foreground">
-                        ${property.price.toLocaleString()}
+                        ${(property.transaction_type === "rent" ? property.rent_price || 0 : property.price).toLocaleString()}
+                        {property.transaction_type === "rent" && property.rent_period ? ` / ${property.rent_period}` : ""}
                       </p>
                       <div className="flex items-center gap-2 mt-2">
                         {property.featured && (
@@ -137,6 +138,12 @@ const AdminProperties = () => {
                         )}
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary text-muted-foreground">
                           {property.type}
+                        </span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium capitalize bg-blue-500/10 text-blue-700">
+                          {property.transaction_type === "both" ? "Sale & Rent" : property.transaction_type || "sale"}
+                        </span>
+                        <span className="inline-flex items-center px-2.5 py-0.5 text-xs font-medium capitalize bg-secondary text-muted-foreground">
+                          {property.availability_status || "available"}
                         </span>
                       </div>
                     </div>

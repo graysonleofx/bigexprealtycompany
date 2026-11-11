@@ -23,12 +23,12 @@ const Navbar = () => {
     <nav className="fixed inset-x-0 top-0 z-50 border-b border-primary-foreground/10 bg-slate-dark/95 text-primary-foreground shadow-lg shadow-slate-dark/10 backdrop-blur-xl">
       <div className="site-container">
         <div className="flex h-[76px] items-center justify-between">
-          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label="Prestige Estates home">
+          <Link to="/" className="flex shrink-0 items-center gap-3" aria-label="BIG EXP REALTY COMPANY home">
             <span className="flex h-10 w-10 items-center justify-center border border-gold/40 bg-gold/10 text-gold">
               <Building2 className="h-5 w-5" />
             </span>
             <span className="text-[17px] font-bold tracking-tight text-primary-foreground sm:text-lg">
-              BIG EXP<span className="text-gold"> Estates</span>
+              BIG EXP <span className="text-gold">REALTY COMPANY</span>
             </span>
           </Link>
 
@@ -75,6 +75,13 @@ const Navbar = () => {
                       <DropdownMenuSeparator />
                     </>
                   )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/my-requests" className="flex items-center gap-2">
+                      <Building2 className="h-4 w-4" />
+                      My Requests
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()} className="flex items-center gap-2">
                     <LogOut className="h-4 w-4" />
                     Sign Out
@@ -129,6 +136,9 @@ const Navbar = () => {
                       Admin Panel
                     </Link>
                   )}
+                  <Link to="/my-requests" onClick={() => setIsOpen(false)} className="border-b border-primary-foreground/5 py-3 text-sm text-primary-foreground/75 hover:text-gold">
+                    My Requests
+                  </Link>
                   <button
                     type="button"
                     onClick={() => { signOut(); setIsOpen(false); }}

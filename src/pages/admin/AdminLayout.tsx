@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Home, Building, LogOut, Menu, X, CreditCard, Ticket } from "lucide-react";
+import { Home, Building, LogOut, Menu, X, CreditCard, Ticket, ClipboardList } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +38,7 @@ const AdminLayout = () => {
     { href: "/admin/properties", label: "Properties", icon: Building },
     { href: "/admin/payment-methods", label: "Payment Methods", icon: CreditCard },
     { href: "/admin/support-tickets", label: "Support Tickets", icon: Ticket },
+    { href: "/admin/requests", label: "Buy & Rent Requests", icon: ClipboardList },
   ];
 
   return (
@@ -61,8 +62,8 @@ const AdminLayout = () => {
       >
         <div className="p-6">
           <Link to="/" className="flex items-center gap-2">
-            <span className="text-xl font-bold text-primary-foreground">
-              Prestige<span className="text-gold"> Estates</span>
+            <span className="text-lg font-bold text-primary-foreground">
+              BIG EXP <span className="text-gold">REALTY COMPANY</span>
             </span>
           </Link>
           <p className="mt-1 text-xs text-primary-foreground/50">Admin Panel</p>

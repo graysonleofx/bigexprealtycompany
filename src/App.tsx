@@ -15,6 +15,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProperties from "./pages/admin/AdminProperties";
 import AdminPaymentMethods from "./pages/admin/AdminPaymentMethods";
 import AdminSupportTickets from "./pages/admin/AdminSupportTickets";
+import AdminRequests from "./pages/admin/AdminRequests";
+import PropertyRequest from "./pages/PropertyRequest";
+import MyRequests from "./pages/MyRequests";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 import LiveChatWidget from "./components/LiveChatWidget";
@@ -32,6 +35,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/properties" element={<Properties />} />
             <Route path="/property/:id" element={<PropertyDetail />} />
+            <Route path="/property/:id/request" element={<PropertyRequest />} />
+            <Route path="/my-requests" element={<MyRequests />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/support" element={<Support />} />
@@ -41,6 +46,7 @@ const App = () => (
               <Route path="properties" element={<AdminProperties />} />
               <Route path="payment-methods" element={<AdminPaymentMethods />} />
               <Route path="support-tickets" element={<AdminSupportTickets />} />
+              <Route path="requests" element={<AdminRequests />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

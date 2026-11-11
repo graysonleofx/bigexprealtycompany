@@ -15,7 +15,7 @@ const team = [
     name: "Alexandra Sterling",
     role: "Founder & CEO",
     image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
-    bio: "With over 20 years in luxury real estate, Alexandra founded Prestige Estates to redefine the property buying experience.",
+    bio: "With over 20 years in luxury real estate, Alexandra founded BIG EXP REALTY COMPANY to redefine the property buying experience.",
   },
   {
     name: "James Morrison",
@@ -53,7 +53,7 @@ const About = () => {
               A more considered way to find your place
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-primary-foreground/70">
-              At Prestige Estates, we believe finding your next property should feel clear, personal, and considered. We connect people with places that feel right for their next chapter.
+              At BIG EXP REALTY COMPANY, we believe finding your next property should feel clear, personal, and considered. We connect people with places that feel right for their next chapter.
             </p>
           </div>
         </div>

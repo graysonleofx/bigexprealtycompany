@@ -86,6 +86,8 @@ export type Database = {
       properties: {
         Row: {
           amenities: string[] | null
+          availability_date: string | null
+          availability_status: string
           baths: number
           beds: number
           created_at: string | null
@@ -96,16 +98,23 @@ export type Database = {
           image_url: string | null
           location: string
           lot_size: string | null
+          minimum_rental_period: number | null
           parking: string | null
           price: number
+          rent_period: string | null
+          rent_price: number | null
+          security_deposit: number | null
           sqft: number
           title: string
+          transaction_type: string
           type: string
           updated_at: string | null
           year_built: number | null
         }
         Insert: {
           amenities?: string[] | null
+          availability_date?: string | null
+          availability_status?: string
           baths?: number
           beds?: number
           created_at?: string | null
@@ -116,16 +125,23 @@ export type Database = {
           image_url?: string | null
           location: string
           lot_size?: string | null
+          minimum_rental_period?: number | null
           parking?: string | null
           price: number
+          rent_period?: string | null
+          rent_price?: number | null
+          security_deposit?: number | null
           sqft?: number
           title: string
+          transaction_type?: string
           type?: string
           updated_at?: string | null
           year_built?: number | null
         }
         Update: {
           amenities?: string[] | null
+          availability_date?: string | null
+          availability_status?: string
           baths?: number
           beds?: number
           created_at?: string | null
@@ -136,15 +152,85 @@ export type Database = {
           image_url?: string | null
           location?: string
           lot_size?: string | null
+          minimum_rental_period?: number | null
           parking?: string | null
           price?: number
+          rent_period?: string | null
+          rent_price?: number | null
+          security_deposit?: number | null
           sqft?: number
           title?: string
+          transaction_type?: string
           type?: string
           updated_at?: string | null
           year_built?: number | null
         }
         Relationships: []
+      }
+      property_requests: {
+        Row: {
+          applicant_email: string
+          applicant_name: string
+          applicant_phone: string
+          contact_method: string
+          created_at: string
+          id: string
+          message: string
+          move_in_date: string | null
+          number_of_occupants: number | null
+          property_id: string | null
+          property_price: number
+          property_title: string
+          request_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          applicant_email: string
+          applicant_name: string
+          applicant_phone: string
+          contact_method?: string
+          created_at?: string
+          id?: string
+          message?: string
+          move_in_date?: string | null
+          number_of_occupants?: number | null
+          property_id?: string | null
+          property_price: number
+          property_title: string
+          request_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          applicant_email?: string
+          applicant_name?: string
+          applicant_phone?: string
+          contact_method?: string
+          created_at?: string
+          id?: string
+          message?: string
+          move_in_date?: string | null
+          number_of_occupants?: number | null
+          property_id?: string | null
+          property_price?: number
+          property_title?: string
+          request_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_requests_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "properties"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       support_tickets: {
         Row: {
@@ -263,6 +349,20 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      create_property_request: {
+        Args: {
+          p_applicant_email: string
+          p_applicant_name: string
+          p_applicant_phone: string
+          p_contact_method: string
+          p_message?: string
+          p_move_in_date?: string | null
+          p_number_of_occupants?: number | null
+          p_property_id: string
+          p_request_type: string
+        }
+        Returns: string
       }
     }
     Enums: {
