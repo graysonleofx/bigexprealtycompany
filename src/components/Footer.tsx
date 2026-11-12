@@ -106,16 +106,16 @@ const Footer = () => {
                   href="tel:+1234567890"
                   className="text-primary-foreground/70 hover:text-gold transition-smooth text-sm"
                 >
-                  (123) 456-7890
+                  +44 7344 024977
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 shrink-0 text-gold" />
                 <a
-                  href="mailto:info@prestigeestates.com"
+                  href="mailto:info@vyacheslav.maevski@realting-ceo.com"
                   className="text-primary-foreground/70 hover:text-gold transition-smooth text-sm"
                 >
-                  info@prestigeestates.com
+                  vyacheslav.maevski@realting-ceo.com
                 </a>
               </li>
             </ul>
