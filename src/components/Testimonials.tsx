@@ -14,7 +14,7 @@ const testimonials = [
   },
   {
     id: 2,
-    name: "Michael Chen",
+    name: "Oliver Erik",
     role: "Investment Banker",
     content:
       "As someone who values their time, I appreciated how efficient and professional the team was. They presented properties that matched my criteria and made the process straightforward.",
@@ -23,7 +23,7 @@ const testimonials = [
   },
   {
     id: 3,
-    name: "Emily Rodriguez",
+    name: "Crazy Whilly",
     role: "Fashion Designer",
     content:
       "The level of personalization and care I received was remarkable. The team understood what I was looking for and found properties that aligned with my vision.",

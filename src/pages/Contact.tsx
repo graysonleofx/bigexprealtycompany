@@ -23,12 +23,12 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Call Us",
-    details: ["(123) 456-7890", "(123) 456-7891"],
+    details: ["+44 7344 024977"],
   },
   {
     icon: Mail,
     title: "Email Us",
-    details: ["info@prestigeestates.com", "sales@prestigeestates.com"],
+    details: ["vyacheslav.maevski@realting-ceo.com"],
   },
   {
     icon: Clock,

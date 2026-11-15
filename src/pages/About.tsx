@@ -12,27 +12,27 @@ const stats = [
 
 const team = [
   {
-    name: "Alexandra Sterling",
+    name: "Amanda W. Rankin",
     role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
+    image: "https://www.image2url.com/r2/default/images/1794781775221-6a4760fb-787b-4042-81cf-21037b8e26fd.jpg",
     bio: "With over 20 years in luxury real estate, Alexandra founded BIG EXP REALTY COMPANY to redefine the property buying experience.",
   },
   {
-    name: "James Morrison",
+    name: "Steven R. Porterfield",
     role: "Head of Sales",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+    image: "https://www.image2url.com/r2/default/images/1794782146204-19090190-8d6b-4eed-aac5-57fb4e7d0f44.jpg",
     bio: "James brings 15 years of expertise in closing high-value transactions and building lasting client relationships.",
   },
   {
-    name: "Victoria Chen",
+    name: "Helen M. Silva",
     role: "Lead Property Consultant",
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
+    image: "https://www.image2url.com/r2/default/images/1794781915003-1338ee5c-ab7c-41e1-8fc5-e39182b7b0d4.jpg",
     bio: "Victoria's eye for detail and deep market knowledge helps clients find properties that perfectly match their vision.",
   },
   {
-    name: "Robert Williams",
+    name: "Sidney R. Gross",
     role: "Investment Advisor",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+    image: "https://www.image2url.com/r2/default/images/1794782223585-2d798700-a965-4721-bb2d-5d3789bf786b.jpg",
     bio: "Robert specializes in property investment strategies, helping clients build wealth through smart real estate decisions.",
   },
 ];

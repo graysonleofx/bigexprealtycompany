@@ -27,8 +27,8 @@ const fallbackImages = [property1, property2, property3];
 
 const defaultAgent = {
   name: "Alexandra Sterling",
-  phone: "(123) 456-7890",
-  email: "contact@prestigeestates.com",
+  phone: "+44 7344 024977",
+  email: " crazywhilly@gmail.com",
   image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
 };
 
