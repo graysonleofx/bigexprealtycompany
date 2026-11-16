@@ -116,7 +116,7 @@ const sendPropertyRequestNotification = async (
         Authorization: `Bearer ${resendApiKey}`,
       },
       body: JSON.stringify({
-        from: "Luxe Realty <onboarding@resend.dev>",
+        from: "BIG EXP REALITY COMPANY <no-reply@realting-ceo.com>",
         to: [recipientEmail],
         subject: payload.type === "property_request_created"
           ? `Property request received: ${request.property_title}`
