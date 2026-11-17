@@ -26,10 +26,10 @@ import property3 from "@/assets/property-3.jpg";
 const fallbackImages = [property1, property2, property3];
 
 const defaultAgent = {
-  name: "Alexandra Sterling",
+  name: "Crazy Whilly",
   phone: "+44 7344 024977",
   email: " crazywhilly@gmail.com",
-  image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
+  image: "https://www.image2url.com/r2/default/images/1794945392031-99d12da9-224d-4306-ab10-9986f7cd562a.jpg",
 };
 
 const defaultFeatures = [
