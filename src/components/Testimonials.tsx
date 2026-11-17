@@ -10,7 +10,7 @@ const testimonials = [
     content:
       "The team made finding our dream home an absolute pleasure. Their attention to detail and understanding of what we were looking for was exceptional. They went above and beyond to make every step feel seamless.",
     rating: 5,
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=face",
+    image: "https://www.image2url.com/r2/default/images/1794945392031-99d12da9-224d-4306-ab10-9986f7cd562a.jpg",
   },
   {
     id: 2,
@@ -19,7 +19,7 @@ const testimonials = [
     content:
       "As someone who values their time, I appreciated how efficient and professional the team was. They presented properties that matched my criteria and made the process straightforward.",
     rating: 5,
-    image: "https://www.image2url.com/r2/default/images/1794945392031-99d12da9-224d-4306-ab10-9986f7cd562a.jpg",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
   },
   {
     id: 3,
