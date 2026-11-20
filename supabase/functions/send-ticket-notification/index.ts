@@ -95,16 +95,6 @@ const sendPropertyRequestNotification = async (
 
   const isNewRequest = payload.type === "property_request_created";
   const requestLabel = request.request_type === "purchase" ? "Purchase request" : "Rental application";
-  const applicantHtml = `
-    <h1>${isNewRequest ? "Request received" : "Request status updated"}</h1>
-    <p>Hello ${escapeHtml(request.applicant_name)},</p>
-    <p>${isNewRequest
-      ? `Your ${request.request_type === "purchase" ? "purchase request" : "rental application"} has been received. Our property team will contact you shortly.`
-      : `The status of your request is now ${escapeHtml(request.status.replace("_", " "))}.`}</p>
-    <p><strong>Property:</strong> ${escapeHtml(request.property_title)}</p>
-    <p><strong>Request ID:</strong> ${escapeHtml(request.id)}</p>
-  `;
-  const adminEmail = Deno.env.get("PROPERTY_REQUEST_NOTIFICATION_EMAIL")?.trim();
   const formattedPrice = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -115,6 +105,108 @@ const sendPropertyRequestNotification = async (
     timeStyle: "short",
     timeZone: "UTC",
   });
+  const statusLabel = request.status.replace("_", " ");
+  const applicantHtml = `
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="x-apple-disable-message-reformatting">
+        <title>${isNewRequest ? "Request received" : "Request status update"}</title>
+        <style>
+          @media only screen and (max-width: 600px) {
+            .email-gutter { padding-left: 18px !important; padding-right: 18px !important; }
+            .email-title { font-size: 23px !important; }
+            .email-card { border-radius: 0 !important; }
+            .email-shell { padding: 0 !important; }
+          }
+        </style>
+      </head>
+      <body style="margin:0;padding:0;background-color:#f3f5f8;font-family:Arial,Helvetica,sans-serif;color:#1f2937;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+        <div style="display:none;font-size:1px;color:#f3f5f8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+          ${isNewRequest ? "Your property request has been received." : `Your request status is now ${escapeHtml(statusLabel)}.`}
+        </div>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#f3f5f8;">
+          <tr>
+            <td class="email-shell" align="center" style="padding:28px 12px;">
+              <table class="email-card" role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="width:100%;max-width:600px;border-collapse:separate;background-color:#ffffff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;">
+                <tr>
+                  <td class="email-gutter" style="padding:24px 32px;background-color:#172337;border-bottom:4px solid #c9a45c;">
+                    <p style="margin:0;color:#e5c783;font-size:12px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;">BIG EXP REALTY COMPANY</p>
+                    <h1 class="email-title" style="margin:14px 0 0;color:#ffffff;font-size:27px;line-height:1.25;">${isNewRequest ? "We've received your request" : "Your request has been updated"}</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="email-gutter" style="padding:28px 32px 12px;">
+                    <p style="margin:0 0 10px;color:#1f2937;font-size:16px;line-height:1.6;">Hello ${escapeHtml(request.applicant_name)},</p>
+                    <p style="margin:0;color:#4b5563;font-size:15px;line-height:1.7;">
+                      ${isNewRequest
+                        ? "Thank you for your interest. Our property team has received your request and will be in touch using your preferred contact method."
+                        : `The status of your property request is now <strong style="color:#172337;text-transform:capitalize;">${escapeHtml(statusLabel)}</strong>.`}
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="email-gutter" style="padding:16px 32px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background-color:#f8f7f4;border-left:3px solid #c9a45c;">
+                      <tr>
+                        <td style="padding:18px 20px;">
+                          <p style="margin:0 0 7px;color:#6b7280;font-size:11px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;">Your property</p>
+                          <p style="margin:0;color:#172337;font-size:18px;font-weight:bold;line-height:1.45;overflow-wrap:anywhere;">${escapeHtml(request.property_title)}</p>
+                          <p style="margin:9px 0 0;color:#374151;font-size:14px;line-height:1.5;">${escapeHtml(requestLabel)} <span style="color:#9ca3af;">&middot;</span> ${escapeHtml(formattedPrice)}</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="email-gutter" style="padding:8px 32px 4px;">
+                    <h2 style="margin:0 0 12px;color:#172337;font-size:16px;line-height:1.4;">Request summary</h2>
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;font-size:14px;">
+                      <tr>
+                        <td style="width:38%;padding:11px 10px 11px 0;border-top:1px solid #e5e7eb;color:#6b7280;vertical-align:top;">Status</td>
+                        <td style="padding:11px 0;border-top:1px solid #e5e7eb;color:#1f2937;font-weight:bold;text-transform:capitalize;">${escapeHtml(statusLabel)}</td>
+                      </tr>
+                      <tr>
+                        <td style="padding:11px 10px 11px 0;border-top:1px solid #e5e7eb;color:#6b7280;vertical-align:top;">Request number</td>
+                        <td style="padding:11px 0;border-top:1px solid #e5e7eb;color:#374151;font-family:Arial,Helvetica,sans-serif;font-size:12px;overflow-wrap:anywhere;">${escapeHtml(request.id)}</td>
+                      </tr>
+                      ${request.move_in_date ? `<tr><td style="padding:11px 10px 11px 0;border-top:1px solid #e5e7eb;color:#6b7280;vertical-align:top;">Preferred move-in</td><td style="padding:11px 0;border-top:1px solid #e5e7eb;color:#374151;">${escapeHtml(request.move_in_date)}</td></tr>` : ""}
+                      ${request.number_of_occupants ? `<tr><td style="padding:11px 10px 11px 0;border-top:1px solid #e5e7eb;color:#6b7280;vertical-align:top;">Occupants</td><td style="padding:11px 0;border-top:1px solid #e5e7eb;color:#374151;">${request.number_of_occupants}</td></tr>` : ""}
+                    </table>
+                  </td>
+                </tr>
+                ${request.message ? `
+                  <tr>
+                    <td class="email-gutter" style="padding:20px 32px 8px;">
+                      <h2 style="margin:0 0 10px;color:#172337;font-size:16px;line-height:1.4;">Your message</h2>
+                      <p style="margin:0;padding:14px 16px;background-color:#f8fafc;border:1px solid #e5e7eb;border-radius:5px;color:#374151;font-size:14px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;">${escapeHtml(request.message)}</p>
+                    </td>
+                  </tr>
+                ` : ""}
+                <tr>
+                  <td class="email-gutter" style="padding:20px 32px 28px;">
+                    <p style="margin:0;color:#4b5563;font-size:14px;line-height:1.65;">
+                      ${isNewRequest
+                        ? "You can check the latest progress anytime from the My Requests section of your account."
+                        : "If you have questions about this update, please reply to this email and our team will be happy to help."}
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="email-gutter" style="padding:17px 32px;background-color:#f8fafc;border-top:1px solid #e5e7eb;">
+                    <p style="margin:0;color:#6b7280;font-size:12px;line-height:1.6;">This is an automated update from BIG EXP REALTY COMPANY. Please keep your request number for reference.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
+  const adminEmail = Deno.env.get("PROPERTY_REQUEST_NOTIFICATION_EMAIL")?.trim();
   const adminHtml = `
     <div style="margin:0;padding:32px 12px;background-color:#f3f5f8;font-family:Arial,Helvetica,sans-serif;color:#1f2937;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:640px;margin:0 auto;background-color:#ffffff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;">
