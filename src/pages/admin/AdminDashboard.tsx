@@ -1,8 +1,15 @@
-import { useProperties } from "@/hooks/useProperties";
-import { Building, DollarSign, Star, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useProperties, usePropertyRequests } from "@/hooks/useProperties";
+import { ArrowRight, BellRing, Building, DollarSign, Star, TrendingUp } from "lucide-react";
 
 const AdminDashboard = () => {
   const { data: properties, isLoading } = useProperties();
+  const {
+    data: requests = [],
+    isLoading: requestsLoading,
+    isError: requestsError,
+  } = usePropertyRequests();
+  const pendingRequests = requests.filter((request) => request.status === "pending");
 
   const stats = [
     {
@@ -72,6 +79,56 @@ const AdminDashboard = () => {
           ))}
         </div>
       )}
+
+      <section className="mt-8 rounded-xl border border-border bg-card p-6">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-gold/10">
+              <BellRing className="h-5 w-5 text-gold" />
+            </div>
+            <div>
+              <h2 className="text-xl font-heading font-semibold text-foreground">New request notifications</h2>
+              <p className="text-sm text-muted-foreground">
+                {pendingRequests.length} awaiting review
+              </p>
+            </div>
+          </div>
+          <Link to="/admin/requests" className="inline-flex items-center gap-2 text-sm font-semibold text-gold hover:text-gold-dark">
+            View all requests <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+
+        {requestsLoading ? (
+          <p className="border-t border-border pt-4 text-sm text-muted-foreground">Loading request notifications...</p>
+        ) : requestsError ? (
+          <p role="alert" className="border-t border-border pt-4 text-sm text-destructive">
+            Request notifications could not be loaded. Please try again later.
+          </p>
+        ) : pendingRequests.length === 0 ? (
+          <p className="border-t border-border pt-4 text-sm text-muted-foreground">There are no new property requests to review.</p>
+        ) : (
+          <ul className="divide-y divide-border">
+            {pendingRequests.slice(0, 5).map((request) => (
+              <li key={request.id} className="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+                <div className="min-w-0">
+                  <p className="font-medium text-foreground">
+                    {request.applicant_name} submitted a {request.request_type} request
+                  </p>
+                  <p className="mt-1 truncate text-sm text-muted-foreground">
+                    {request.property_title} · {new Date(request.created_at).toLocaleString()}
+                  </p>
+                </div>
+                <Link
+                  to="/admin/requests"
+                  className="shrink-0 rounded-md border border-border px-3 py-2 text-sm font-medium text-foreground hover:bg-secondary"
+                >
+                  Review
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <div className="mt-8">
         <h2 className="text-xl font-heading font-semibold text-foreground mb-4">

@@ -108,10 +108,10 @@ const PropertyRequest = () => {
           body: { type: "property_request_created", requestId: createdId },
         });
         if (notificationError) {
-          toast.warning("Your request was saved, but its email confirmation could not be sent.");
+          toast.warning("Your request was saved, but one or more email notifications could not be sent.");
         }
       } catch {
-        toast.warning("Your request was saved, but its email confirmation could not be sent.");
+        toast.warning("Your request was saved, but one or more email notifications could not be sent.");
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : "We couldn't submit your request. Please try again.";

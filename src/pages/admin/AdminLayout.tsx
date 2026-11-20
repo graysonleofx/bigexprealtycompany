@@ -5,9 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Home, Building, LogOut, Menu, X, CreditCard, Ticket, ClipboardList } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { usePropertyRequests } from "@/hooks/useProperties";
 
 const AdminLayout = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
+  const { data: requests = [] } = usePropertyRequests(isAdmin ? undefined : "");
+  const pendingRequestCount = requests.filter((request) => request.status === "pending").length;
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -83,7 +86,15 @@ const AdminLayout = () => {
               )}
             >
               <item.icon className="h-5 w-5" />
-              {item.label}
+              <span className="flex-1">{item.label}</span>
+              {item.href === "/admin/requests" && pendingRequestCount > 0 && (
+                <span
+                  aria-label={`${pendingRequestCount} new requests`}
+                  className="rounded-full bg-gold px-2 py-0.5 text-xs font-semibold text-slate-dark"
+                >
+                  {pendingRequestCount > 99 ? "99+" : pendingRequestCount}
+                </span>
+              )}
             </Link>
           ))}
         </nav>

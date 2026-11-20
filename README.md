@@ -70,7 +70,7 @@ Apply the SQL migration in `supabase/migrations/20261111143000_add_property_tran
 
 Signed-in users can submit purchase requests or rental applications, then review their status under **My Requests**. Request ownership, duplicate active applications, property availability, and administrator-only status changes are enforced by Supabase policies and the `create_property_request` database function.
 
-The existing `send-ticket-notification` Edge Function also sends request and status emails. It uses the existing `RESEND_API_KEY` and Supabase function secrets. Set `PROPERTY_REQUEST_NOTIFICATION_EMAIL` in the Edge Function environment to receive new-request alerts; this value is optional. If email delivery is unavailable, the request still saves and remains visible in the user and admin dashboards.
+The `send-ticket-notification` Edge Function sends new-request emails to both the applicant and the admin address configured in the Supabase secret `PROPERTY_REQUEST_NOTIFICATION_EMAIL`. Configure it with `supabase secrets set PROPERTY_REQUEST_NOTIFICATION_EMAIL=admin@example.com` and deploy the function. The function also requires the existing `RESEND_API_KEY` secret. Applicant confirmations and admin alerts use separate email content; if an email cannot be delivered or the admin address is missing, the request is still saved and appears in the admin dashboard notifications. New pending requests are also shown live on the dashboard and counted beside **Buy & Rent Requests** in the admin navigation.
 
 ## Can I connect a custom domain to my Lovable project?
 
