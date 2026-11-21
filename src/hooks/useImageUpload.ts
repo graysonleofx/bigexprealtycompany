@@ -6,58 +6,66 @@ export const useImageUpload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  const uploadImage = async (file: File): Promise<string | null> => {
+  const uploadImages = async (files: File[]): Promise<string[]> => {
+    if (!files.length) return [];
+
+    setIsUploading(true);
+    setUploadProgress(0);
+    const uploadedUrls: string[] = [];
+
     try {
-      setIsUploading(true);
-      setUploadProgress(0);
+      for (const [index, file] of files.entries()) {
+        if (!file.type.startsWith("image/")) {
+          toast.error(`${file.name} is not an image file`);
+          continue;
+        }
 
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        toast.error("Please upload an image file");
-        return null;
+        if (file.size > 5 * 1024 * 1024) {
+          toast.error(`${file.name} is larger than 5 MB`);
+          continue;
+        }
+
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `properties/${fileName}`;
+
+        try {
+          const { error: uploadError } = await supabase.storage
+            .from("property-images")
+            .upload(filePath, file, {
+              cacheControl: "3600",
+              upsert: false,
+            });
+
+          if (uploadError) throw uploadError;
+
+          const { data: urlData } = supabase.storage
+            .from("property-images")
+            .getPublicUrl(filePath);
+          uploadedUrls.push(urlData.publicUrl);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown upload error";
+          console.error(`Upload error for ${file.name}:`, error);
+          toast.error(`Failed to upload ${file.name}: ${message}`);
+        }
+
+        setUploadProgress(Math.round(((index + 1) / files.length) * 100));
       }
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB");
-        return null;
+      if (uploadedUrls.length) {
+        toast.success(`${uploadedUrls.length} ${uploadedUrls.length === 1 ? "image" : "images"} uploaded successfully`);
       }
 
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `properties/${fileName}`;
-
-      setUploadProgress(30);
-
-      const { error: uploadError } = await supabase.storage
-        .from("property-images")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      setUploadProgress(80);
-
-      const { data: urlData } = supabase.storage
-        .from("property-images")
-        .getPublicUrl(filePath);
-
-      setUploadProgress(100);
-      toast.success("Image uploaded successfully");
-
-      return urlData.publicUrl;
-    } catch (error: any) {
-      console.error("Upload error:", error);
-      toast.error("Failed to upload image: " + error.message);
-      return null;
+      return uploadedUrls;
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
+  };
+
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const [url] = await uploadImages([file]);
+    return url || null;
   };
 
   const deleteImage = async (url: string): Promise<boolean> => {
@@ -74,7 +82,7 @@ export const useImageUpload = () => {
 
       if (error) throw error;
       return true;
-    } catch (error: any) {
+    } catch (error) {
       console.error("Delete error:", error);
       return false;
     }
@@ -82,6 +90,7 @@ export const useImageUpload = () => {
 
   return {
     uploadImage,
+    uploadImages,
     deleteImage,
     isUploading,
     uploadProgress,

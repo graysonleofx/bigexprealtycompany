@@ -28,7 +28,7 @@ const fallbackImages = [property1, property2, property3];
 const defaultAgent = {
   name: "Crazy Whilly",
   phone: "+44 7344 024977",
-  email: " crazywhilly@gmail.com",
+  email: " bigexprealestatecompany@gmail.com",
   image: "https://www.image2url.com/r2/default/images/1794945392031-99d12da9-224d-4306-ab10-9986f7cd562a.jpg",
 };
 

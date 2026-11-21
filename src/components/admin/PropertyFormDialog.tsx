@@ -47,7 +47,7 @@ const propertySchema = z.object({
   type: z.string().min(1, "Type is required"),
   featured: z.boolean(),
   description: z.string().max(5000).nullable(),
-  image_url: z.string().nullable(),
+  gallery_images: z.array(z.string()),
   year_built: z.preprocess(
     (value) => value === "" || value === null || value === undefined ? null : Number(value),
     z.number().min(1800).max(2100).nullable(),
@@ -98,7 +98,7 @@ const PropertyFormDialog = ({
       type: "House",
       featured: false,
       description: "",
-      image_url: null,
+      gallery_images: [],
       year_built: null,
       lot_size: "",
       parking: "",
@@ -124,7 +124,11 @@ const PropertyFormDialog = ({
         type: property.type,
         featured: property.featured,
         description: property.description || "",
-        image_url: property.image_url || null,
+        gallery_images: property.gallery_images?.length
+          ? property.gallery_images
+          : property.image_url
+          ? [property.image_url]
+          : [],
         year_built: property.year_built,
         lot_size: property.lot_size || "",
         parking: property.parking || "",
@@ -147,7 +151,7 @@ const PropertyFormDialog = ({
         type: "House",
         featured: false,
         description: "",
-        image_url: null,
+        gallery_images: [],
         year_built: null,
         lot_size: "",
         parking: "",
@@ -172,12 +176,12 @@ const PropertyFormDialog = ({
       sqft: values.sqft,
       type: values.type,
       featured: values.featured,
-      image_url: values.image_url || null,
+      image_url: values.gallery_images[0] || null,
+      gallery_images: values.gallery_images,
       description: values.description || null,
       year_built: values.year_built || null,
       lot_size: values.lot_size || null,
       parking: values.parking || null,
-      gallery_images: property?.gallery_images || [],
       amenities: property?.amenities || [],
     };
 
@@ -200,16 +204,16 @@ const PropertyFormDialog = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Image Upload */}
+            {/* Property Photos */}
             <FormField
               control={form.control}
-              name="image_url"
+              name="gallery_images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Property Image</FormLabel>
+                  <FormLabel>Property Photos</FormLabel>
                   <FormControl>
                     <ImageUpload
-                      value={field.value}
+                      value={field.value || []}
                       onChange={field.onChange}
                     />
                   </FormControl>
