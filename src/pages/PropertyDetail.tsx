@@ -11,13 +11,22 @@ import {
   Share2,
   Calendar,
   ChevronLeft,
+  ChevronRight,
   Check,
+  Images,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useProperties, useProperty } from "@/hooks/useProperties";
 import PropertyCard from "@/components/PropertyCard";
 import SupportTicketForm from "@/components/SupportTicketForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
@@ -44,6 +53,7 @@ const defaultFeatures = [
 const PropertyDetail = () => {
   const { id } = useParams();
   const [activeImage, setActiveImage] = useState(0);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const { data: property, isLoading } = useProperty(id || "");
   const { data: properties = [] } = useProperties();
@@ -117,37 +127,91 @@ const PropertyDetail = () => {
           </Link>
         </div>
 
-        {/* Image Gallery */}
+        {/* Property Photos */}
         <section className="container mx-auto px-4">
-          <div className="grid gap-3 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="aspect-[16/10] overflow-hidden border border-border">
-                <img
-                  src={images[activeImage]}
-                  alt={property.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          <div className="relative h-[280px] overflow-hidden border border-border bg-secondary sm:h-[420px] lg:h-[520px]">
+            <img
+              src={images[activeImage] ?? images[0]}
+              alt={`${property.title} - photo ${activeImage + 1}`}
+              className="h-full w-full object-cover"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/25" />
+
+            <div className="absolute left-4 right-4 top-4 flex items-start justify-between gap-3 sm:left-6 sm:right-6 sm:top-6">
+              <span className="rounded-full bg-black/55 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+                Photo {activeImage + 1} of {images.length}
+              </span>
+              <Button
+                type="button"
+                variant="secondary"
+                className="shrink-0 gap-2 bg-background/95 shadow-lg hover:bg-background"
+                onClick={() => setIsGalleryOpen(true)}
+              >
+                <Images className="h-4 w-4" />
+                <span className="hidden sm:inline">View all photos</span>
+                <span className="sm:hidden">All photos</span>
+              </Button>
             </div>
-            <div className="grid grid-cols-3 lg:grid-cols-1 gap-4">
-              {images.slice(0, 3).map((img, index) => (
+
+            {images.length > 1 && (
+              <>
                 <button
-                  key={index}
-                  onClick={() => setActiveImage(index)}
-                  className={cn(
-                    "aspect-[16/10] overflow-hidden border transition-smooth lg:aspect-[16/9]",
-                    activeImage === index ? "ring-2 ring-gold" : "opacity-70 hover:opacity-100"
-                  )}
+                  type="button"
+                    aria-label="View previous photo"
+                    onClick={() => setActiveImage((index) => (index - 1 + images.length) % images.length)}
+                    className="absolute left-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg transition hover:bg-background sm:left-6"
                 >
-                  <img
-                    src={img}
-                    alt={`View ${index + 1}`}
-                    className="w-full h-full object-cover"
-                  />
+                    <ChevronLeft className="h-5 w-5" />
                 </button>
-              ))}
-            </div>
+                <button
+                    type="button"
+                    aria-label="View next photo"
+                    onClick={() => setActiveImage((index) => (index + 1) % images.length)}
+                    className="absolute right-4 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-background/90 text-foreground shadow-lg transition hover:bg-background sm:right-6"
+                >
+                    <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
           </div>
+
+          <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
+            <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto p-5 sm:p-8">
+              <DialogHeader className="pr-8">
+                <DialogTitle className="font-heading text-2xl">Property photos</DialogTitle>
+                <DialogDescription>
+                    {images.length} photos of {property.title}. Select a photo to feature it in the gallery.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {images.map((img, index) => (
+                    <button
+                      key={`${img}-${index}`}
+                      type="button"
+                      aria-label={`Feature photo ${index + 1}`}
+                      onClick={() => {
+                        setActiveImage(index);
+                        setIsGalleryOpen(false);
+                      }}
+                      className={cn(
+                        "group overflow-hidden border bg-card text-left transition hover:border-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold",
+                        activeImage === index && "border-gold"
+                      )}
+                    >
+                      <img
+                        src={img}
+                        alt={`${property.title} - photo ${index + 1}`}
+                        loading="lazy"
+                        className="aspect-[4/3] w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+                      />
+                      <span className="block px-3 py-2 text-sm text-muted-foreground">
+                        Photo {index + 1}
+                      </span>
+                    </button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </section>
 
         {/* Property Info */}
