@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Search, MapPin, Home, DollarSign, BedDouble, ArrowDown } from "lucide-react";
 import heroImage from "@/assets/hero-mansion.jpg";
+import ambassadorImage from "@/assets/brand-ambassador.jpg";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -31,7 +32,28 @@ const HeroSection = () => {
       <div className="absolute -right-36 top-36 -z-10 h-96 w-96 rounded-full bg-blue-500/15 blur-[120px]" />
 
       <div className="site-container pb-14 pt-32 sm:pb-16 sm:pt-36 lg:pb-20 lg:pt-40">
-        <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
+          <div className="relative mx-auto aspect-[4/3] w-full max-w-[420px] overflow-hidden rounded-2xl border border-white/15 bg-slate-900 shadow-2xl shadow-black/30 lg:aspect-[4/5] animate-fade-up">
+            <img
+              src={ambassadorImage}
+              alt="Brand ambassador of BIG EXP Realty Company"
+              className="h-full w-full object-cover object-[center_30%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-dark/95 via-slate-dark/15 to-slate-dark/10" />
+            <div className="absolute left-5 top-5 rounded-full border border-white/25 bg-slate-dark/65 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground backdrop-blur-md sm:left-6 sm:top-6">
+              Brand Ambassador
+            </div>
+            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
+              <span className="mb-3 block h-px w-10 bg-gold" />
+              <p className="text-xl font-semibold tracking-tight text-primary-foreground sm:text-2xl">
+                BIG EXP REALTY COMPANY
+              </p>
+              <p className="mt-1 text-sm text-primary-foreground/70">
+                A trusted name in real estate
+              </p>
+            </div>
+          </div>
+
           <div className="max-w-3xl">
             <div className="mb-7 inline-flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground/75 animate-fade-up">
               <span className="h-px w-9 bg-gold" />
@@ -72,16 +94,6 @@ const HeroSection = () => {
             </div>
           </div>
 
-          <div className="hidden lg:block">
-            <div className="ml-auto max-w-[390px] border-l border-primary-foreground/20 pl-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">The right move starts here</p>
-              <p className="mt-5 text-2xl font-medium leading-relaxed text-primary-foreground/90">
-                A home is more than an address. It&apos;s where your next chapter begins.
-              </p>
-              <div className="mt-7 h-px w-20 bg-gradient-gold" />
-              <p className="mt-5 text-sm text-primary-foreground/60">Thoughtful guidance. Exceptional places.</p>
-            </div>
-          </div>
         </div>
 
         <div id="property-search" className="mt-14 border border-white/60 bg-white p-4 text-foreground shadow-2xl shadow-black/20 sm:mt-16 sm:p-6 lg:mt-20">
