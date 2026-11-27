@@ -34,7 +34,7 @@ const CTASection = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <a href="tel:+1234567890">
+              <a href="tel:+44 7344 024977">
                 <Button variant="hero-outline" size="xl" className="w-full sm:w-auto">
                   <Phone className="mr-2 h-5 w-5" />
                   Call Us Now
